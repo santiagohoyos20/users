@@ -2,7 +2,7 @@ import polyline from "@mapbox/polyline";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import { useEffect, useRef, useState } from "react";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
 
 // Nombre de la tarea en background
@@ -64,7 +64,7 @@ async function sendLocationToServer(location: {
 }
 
 export default function MapViewComponent() {
-  const [deviceLocation, setDeviceLocation] = useState<Coordinate | null>(null);
+  const [busesLocation, setBusesLocation] = useState<Coordinate[]>([]);
   const [routeCoords, setRouteCoords] = useState<Coordinate[]>([]);
   const [isTracking, setIsTracking] = useState(false);
   const locationSubscription = useRef<Location.LocationSubscription | null>(
@@ -78,102 +78,17 @@ export default function MapViewComponent() {
     longitudeDelta: 0.2,
   };
 
-  // Solicitar permisos de ubicación (incluyendo background)
-  const requestPermissions = async () => {
-    const { status: foregroundStatus } =
-      await Location.requestForegroundPermissionsAsync();
+  const inputBuses = [
+    { latitude: 11.017456, longitude: -74.851353 },
+    { latitude: 11.001840, longitude: -74.841763 },
+    { latitude: 10.944124, longitude: -74.833767 },
+    { latitude: 10.908506, longitude: -74.793681 }, // Carrera 46
+  ];
 
-    if (foregroundStatus !== "granted") {
-      Alert.alert("Permiso denegado", "Se necesita permiso de ubicación");
-      return false;
-    }
-
-    const { status: backgroundStatus } =
-      await Location.requestBackgroundPermissionsAsync();
-
-    if (backgroundStatus !== "granted") {
-      Alert.alert(
-        "Permiso de fondo denegado",
-        "Para rastrear en segundo plano, habilita 'Permitir siempre' en la configuración"
-      );
-      return false;
-    }
-
-    return true;
-  };
-
-  // Iniciar tracking en background
-  const startBackgroundTracking = async () => {
-    const hasPermissions = await requestPermissions();
-    if (!hasPermissions) return;
-
-    try {
-      const isTaskDefined = await TaskManager.isTaskDefined(LOCATION_TASK_NAME);
-      if (!isTaskDefined) {
-        console.error("La tarea no está definida");
-        return;
-      }
-
-      await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
-        accuracy: Location.Accuracy.High,
-        timeInterval: 1, // Actualizar cada 10 segundos
-        distanceInterval: 10, // O cada 10 metros
-        foregroundService: {
-          notificationTitle: "Rastreando ubicación",
-          notificationBody: "Tu ubicación se está compartiendo",
-          notificationColor: "#4285F4",
-        },
-        pausesUpdatesAutomatically: false,
-        showsBackgroundLocationIndicator: true,
-      });
-
-      setIsTracking(true);
-      console.log("✅ Background tracking iniciado");
-    } catch (error) {
-      console.error("Error al iniciar tracking:", error);
-    }
-  };
-
-  // Detener tracking en background
-  const stopBackgroundTracking = async () => {
-    try {
-      await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
-      setIsTracking(false);
-      console.log("🛑 Background tracking detenido");
-    } catch (error) {
-      console.error("Error al detener tracking:", error);
-    }
-  };
-
-  // Ubicación en tiempo real (foreground)
   useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        console.log("Permission denied");
-        return;
-      }
-
-      locationSubscription.current = await Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.High,
-          timeInterval: 5000,
-          distanceInterval: 10,
-        },
-        (location) => {
-          setDeviceLocation({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-          });
-          console.log("Ubicación actualizada:", location.coords);
-        }
-      );
-    })();
-
-    return () => {
-      locationSubscription.current?.remove();
-    };
+    setBusesLocation(inputBuses);
   }, []);
+
 
   // Waypoints para la ruta
   const waypoints: Coordinate[] = [
@@ -257,17 +172,20 @@ export default function MapViewComponent() {
             pinColor="red"
           />
 
-          {deviceLocation && (
-            <Marker
-              coordinate={deviceLocation}
-              title="Mi Ubicación"
-              description="Tu ubicación actual"
-            >
-              <View style={styles.busMarker}>
-                <Text style={styles.busEmoji}>🚌</Text>
-              </View>
-            </Marker>
-          )}
+          {busesLocation
+            .filter((location) => location !== null)
+            .map((location, index) => (
+              <Marker
+                key={index}
+                coordinate={location}
+                title={`Bus ${index + 1}`}
+                description="Ubicación del bus"
+              >
+                <View style={styles.busMarker}>
+                  <Text style={styles.busEmoji}>🚌</Text>
+                </View>
+              </Marker>
+            ))}
 
           {routeCoords.length > 0 && (
             <Polyline
@@ -278,50 +196,18 @@ export default function MapViewComponent() {
           )}
         </MapView>
       </View>
-      <View style={styles.controls}>
-        <Pressable
-          onPress={
-            isTracking ? stopBackgroundTracking : startBackgroundTracking
-          }
-          style={{
-            backgroundColor: isTracking ? "#FF3B30" : "#4285F4",
-            paddingVertical: 14,
-            paddingHorizontal: 20,
-            borderRadius: 10,
-            width: "200",
-            alignSelf: "center",
-          }}
-        >
-          <Text
-            style={{
-              color: "#fff",
-              textAlign: "center",
-              fontSize: 16,
-              fontWeight: "600",
-            }}
-          >
-            {isTracking ? "Detener Tracking" : "Iniciar Tracking"}
-          </Text>
-        </Pressable>
-      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: "90%",
-    height: "70%",
+    height: "80%",
     overflow: "hidden",
-    marginBottom: 20,
   },
   containerMap: {
-    height: "80%",
-    borderRadius: 12,
+    flex: 1,
     overflow: "hidden",
-    borderColor: "#ccc",
-    borderWidth: 1,
-    marginBottom: 20,
   },
   controls: {
     padding: 10,
