@@ -1,12 +1,7 @@
 import polyline from "@mapbox/polyline";
-import * as Location from "expo-location";
-import * as TaskManager from "expo-task-manager";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
-
-// Nombre de la tarea en background
-const LOCATION_TASK_NAME = "background-location-task";
 
 // Tipo para coordenadas
 interface Coordinate {
@@ -14,62 +9,9 @@ interface Coordinate {
   longitude: number;
 }
 
-// Define la tarea de ubicación en background
-TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
-  if (error) {
-    console.error("Error en background location:", error);
-    return;
-  }
-  if (data) {
-    const { locations } = data as { locations: Location.LocationObject[] };
-    const location = locations[0];
-
-    console.log("📍 Ubicación en background:", {
-      lat: location.coords.latitude,
-      lng: location.coords.longitude,
-      timestamp: new Date(location.timestamp).toLocaleTimeString(),
-    });
-
-    // Aquí puedes enviar la ubicación a tu servidor
-    sendLocationToServer({
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-      timestamp: location.timestamp,
-    });
-  }
-});
-
-// Función para enviar ubicación al servidor
-async function sendLocationToServer(location: {
-  latitude: number;
-  longitude: number;
-  timestamp: number;
-}) {
-  try {
-    // Reemplaza con tu endpoint
-    const response = await fetch("https://tu-servidor.com/api/location", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(location),
-    });
-
-    if (response.ok) {
-      console.log("✅ Ubicación enviada al servidor");
-    }
-  } catch (error) {
-    console.error("❌ Error al enviar ubicación:", error);
-  }
-}
-
 export default function MapViewComponent() {
   const [busesLocation, setBusesLocation] = useState<Coordinate[]>([]);
   const [routeCoords, setRouteCoords] = useState<Coordinate[]>([]);
-  const [isTracking, setIsTracking] = useState(false);
-  const locationSubscription = useRef<Location.LocationSubscription | null>(
-    null
-  );
 
   const initialRegion = {
     latitude: 10.9878,
@@ -80,7 +22,7 @@ export default function MapViewComponent() {
 
   const inputBuses = [
     { latitude: 11.017456, longitude: -74.851353 },
-    { latitude: 11.001840, longitude: -74.841763 },
+    { latitude: 11.00184, longitude: -74.841763 },
     { latitude: 10.944124, longitude: -74.833767 },
     { latitude: 10.908506, longitude: -74.793681 }, // Carrera 46
   ];
@@ -89,13 +31,15 @@ export default function MapViewComponent() {
     setBusesLocation(inputBuses);
   }, []);
 
-
-  // Waypoints para la ruta
-  const waypoints: Coordinate[] = [
+  // Rutas de ejemplo
+  const k54Route = [
     { latitude: 11.017456, longitude: -74.851353 },
     { latitude: 10.944124, longitude: -74.833767 },
     { latitude: 10.908506, longitude: -74.793681 },
   ];
+
+  // Waypoints para la ruta
+  const waypoints: Coordinate[] = k54Route;
 
   const GOOGLE_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || "";
 
@@ -134,7 +78,8 @@ export default function MapViewComponent() {
       }));
 
       setRouteCoords(coordinates);
-      console.log("Coordenadas de la ruta:", coordinates.length, "puntos");
+      // console.log("Coordenadas de la ruta:", coordinates.length, "puntos");
+
     } catch (error) {
       console.error("Error al obtener la ruta:", error);
     }
