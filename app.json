@@ -1,25 +1,25 @@
 {
   "expo": {
-    "name": "drivers",
-    "slug": "drivers",
+    "name": "users",
+    "slug": "users",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "drivers",
+    "scheme": "users",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "UIBackgroundModes": ["location"],
+        "UIBackgroundModes": [
+          "location"
+        ],
         "NSLocationAlwaysAndWhenInUseUsageDescription": "La app necesita tu ubicación para rastrear el bus en tiempo real, incluso cuando está en segundo plano.",
         "NSLocationWhenInUseUsageDescription": "La app necesita tu ubicación para mostrarte en el mapa.",
         "NSLocationAlwaysUsageDescription": "La app necesita acceso continuo a tu ubicación para rastrear el bus incluso cuando la app está cerrada."
       },
-      "bundleIdentifier": "com.sjhs.drivers"
+      "bundleIdentifier": "com.sjhs.users"
     },
-
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
@@ -27,13 +27,18 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.sjhs.drivers",
+      "package": "com.sjhs.users",
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
         "ACCESS_BACKGROUND_LOCATION",
         "FOREGROUND_SERVICE",
-        "FOREGROUND_SERVICE_LOCATION"
+        "FOREGROUND_SERVICE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_LOCATION"
       ],
       "config": {
         "googleMaps": {
@@ -41,12 +46,10 @@
         }
       }
     },
-
     "web": {
       "output": "static",
       "favicon": "./assets/images/icon.png"
     },
-
     "plugins": [
       "expo-router",
       [
@@ -73,17 +76,16 @@
         }
       ]
     ],
-
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
     },
-
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "793fd982-c03c-4c9c-91a4-671387baa5e3"
+        "projectId": "001a602a-45c2-4e10-a5b8-564976baf914"
       }
-    }
+    },
+    "owner": "diseno"
   }
 }
