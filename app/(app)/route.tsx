@@ -2,6 +2,7 @@ import { useLocalSearchParams } from "expo-router";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useUser } from "../../hooks/useUser";
+import { SafeAreaView } from "react-native-safe-area-context";
 import MapView from "../components/MapView";
 
 export default function Route() {
@@ -11,6 +12,7 @@ export default function Route() {
   console.log("Route params:", { id, name, description });
 
   return (
+    
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <MapView />
       <ScrollView
@@ -32,12 +34,13 @@ export default function Route() {
         </View>
       </ScrollView>
     </View>
+    
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#f3f3f3",
+    backgroundColor: "#FFECE0",
     height: "100%",
   },
 
@@ -48,10 +51,12 @@ const styles = StyleSheet.create({
   },
   footer: {
     width: "100%",
-    maxHeight: 200,
+    maxHeight: 170,
   },
   footerContent: {
     paddingHorizontal: 20,
     paddingVertical: 30
   },
+
+
 });
