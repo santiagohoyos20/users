@@ -17,6 +17,7 @@ export default function AppLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="home" />
         <Stack.Screen name="route" />
+        <Stack.Screen name="info" />
       </Stack>
     </SafeAreaProvider>
   );

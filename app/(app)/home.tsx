@@ -2,6 +2,9 @@ import { useRouter } from "expo-router";
 import { Pressable, StyleSheet, Text, View, ScrollView, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useUser } from "../../hooks/useUser";
+import { useNavigation } from "@react-navigation/native";
+
+
 
 const ROUTES = [
   {
@@ -25,6 +28,16 @@ export default function Home() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFECE0" }}>
+
+
+      <Pressable
+        onPress={() => router.push("/info")}
+        style={styles.infoButton}
+      >
+        <Text style={styles.infoText}>i</Text>
+      </Pressable>
+
+
       <ScrollView contentContainerStyle={styles.container}>
 
 
