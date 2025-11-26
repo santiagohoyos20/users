@@ -1,4 +1,5 @@
-import { Stack } from "expo-router";
+import { Redirect, Stack } from "expo-router";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useUser } from "../../hooks/useUser";
 
 export default function AppLayout() {
@@ -6,15 +7,17 @@ export default function AppLayout() {
 
   if (loading) return null; // pantalla de carga opcional
 
-  // if (!user) {
-  //   // Si no hay usuario → mandar al login
-  //   return <Redirect href="/(auth)/login" />;
-  // }
+  if (!user) {
+    // Si no hay usuario → mandar al login
+    return <Redirect href="/(auth)/login" />;
+  }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="home" />
-      <Stack.Screen name="route" />
-    </Stack>
+    <SafeAreaProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="home" />
+        <Stack.Screen name="route" />
+      </Stack>
+    </SafeAreaProvider>
   );
 }

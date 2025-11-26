@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { useUser } from "../../hooks/useUser";
 
 const ROUTES = [
   {
@@ -18,9 +18,9 @@ const ROUTES = [
 
 export default function Home() {
   const router = useRouter();
+  const { logout } = useUser();
 
   return (
-    <SafeAreaProvider>
       <View style={styles.container}>
         <Text style={styles.title}>Selecciona una Ruta</Text>
 
@@ -46,8 +46,10 @@ export default function Home() {
             <Text style={styles.routeDescription}>{route.description}</Text>
           </Pressable>
         ))}
+        <Pressable onPress={logout} style={styles.logoutButton}>
+            <Text style={styles.logoutText}>Logout</Text>
+          </Pressable>
       </View>
-    </SafeAreaProvider>
   );
 }
 
@@ -86,5 +88,17 @@ const styles = StyleSheet.create({
   routeDescription: {
     fontSize: 14,
     color: "#666",
+  },
+    logoutButton: {
+    backgroundColor: "#4285F4",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+  },
+
+  logoutText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 14,
   },
 });
