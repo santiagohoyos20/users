@@ -2,7 +2,8 @@ import polyline from "@mapbox/polyline";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
-import { k54Route_ida } from "./k54";
+import { k54Route_ida } from "./k54_ida";
+import { k54Route_vuelta } from "./k54_vuelta";
 // Tipo para coordenadas
 interface Coordinate {
   latitude: number;
@@ -23,6 +24,14 @@ export default function MapViewComponent() {
   //   { latitude: 10.944124, longitude: -74.833767 },
   //   { latitude: 10.908506, longitude: -74.793681 }, // Carrera 46
   // ];
+
+  function chunkArray<T>(array: T[], size: number): T[][] {
+  const result: T[][] = [];
+  for (let i = 0; i < array.length; i += size) {
+    result.push(array.slice(i, i + size));
+  }
+  return result;
+  }
 
   useEffect(() => {
     const fetchBuses = async () => {
@@ -88,52 +97,67 @@ export default function MapViewComponent() {
   // Waypoints para la ruta
   const waypoints: Coordinate[] = k54Route_ida;
 
-  const GOOGLE_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || "";
+  const GOOGLE_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || "AIzaSyCzM0x-5dDFApvSjNrjXM6JStcylPGFIqU";
 
   // Función para obtener la ruta
   const fetchRoute = async () => {
-    try {
-      const waypointsStr = waypoints
+  try {
+    const chunks = chunkArray(waypoints, 25); // ← Divide en grupos de 25
+
+    let fullRoute: Coordinate[] = [];
+
+    for (let i = 0; i < chunks.length; i++) {
+      const chunk = chunks[i];
+
+      if (chunk.length < 2) continue;
+
+      const origin = chunk[0];
+      const destination = chunk[chunk.length - 1];
+
+      const waypointsStr = chunk
         .slice(1, -1)
         .map((wp) => `${wp.latitude},${wp.longitude}`)
         .join("|");
 
       const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${
-        waypoints[0].latitude
-      },${waypoints[0].longitude}&destination=${
-        waypoints[waypoints.length - 1].latitude
-      },${
-        waypoints[waypoints.length - 1].longitude
+        origin.latitude
+      },${origin.longitude}&destination=${destination.latitude},${
+        destination.longitude
       }&waypoints=${waypointsStr}&key=${GOOGLE_API_KEY}`;
+
+      console.log(`Request ${i + 1}/${chunks.length}`);
 
       const res = await fetch(url);
       const json = await res.json();
 
       if (!json.routes || json.routes.length === 0) {
-        console.warn("No se encontró ruta");
-        setRouteCoords([]);
-        return;
+        console.warn("No route in chunk", i);
+        continue;
       }
 
-      const points: number[][] = polyline.decode(
-        json.routes[0].overview_polyline.points
-      );
+      const points = polyline.decode(json.routes[0].overview_polyline.points);
 
-      const coordinates: Coordinate[] = points.map(([lat, lng]) => ({
+      const chunkCoords = points.map(([lat, lng]) => ({
         latitude: lat,
         longitude: lng,
       }));
 
-      setRouteCoords(coordinates);
-      // console.log("Coordenadas de la ruta:", coordinates.length, "puntos");
-    } catch (error) {
-      console.error("Error al obtener la ruta:", error);
+      // Agregarlos a la ruta final
+      fullRoute = [...fullRoute, ...chunkCoords];
     }
-  };
+
+    setRouteCoords(fullRoute);
+    console.log("Ruta total generada:", fullRoute.length, "puntos");
+
+  } catch (error) {
+    console.error("Error al obtener la ruta:", error);
+  }
+};
+
 
   useEffect(() => {
     if (GOOGLE_API_KEY) {
-      fetchRoute();
+      //fetchRoute();
     } else {
       console.warn("No se configuró GOOGLE_API_KEY");
     }
@@ -178,13 +202,16 @@ export default function MapViewComponent() {
               </Marker>
             ))}
 
-          {routeCoords.length > 0 && (
-            <Polyline
-              coordinates={routeCoords}
-              strokeColor="#4285F4"
-              strokeWidth={5}
-            />
-          )}
+          <Polyline
+            coordinates={k54Route_ida}
+            strokeColor="#4285F4"
+            strokeWidth={5}
+          />
+          <Polyline
+            coordinates={k54Route_vuelta}
+            strokeColor="#ff0000ff"
+            strokeWidth={5}
+          />
         </MapView>
       </View>
     </View>
