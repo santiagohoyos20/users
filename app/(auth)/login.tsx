@@ -37,11 +37,11 @@ const Login = () => {
 
         {/* Tarjeta */}
         <View style={styles.card}>
-          <Text style={styles.title}>Iniciar Sesión</Text>
+          <Text style={styles.title}>Inicio de Sesión</Text>
 
           <TextInput
             style={styles.input}
-            placeholder="Email"
+            placeholder="Correo Electrónico"
             placeholderTextColor="#888"
             value={email}
             onChangeText={setEmail}
@@ -50,7 +50,7 @@ const Login = () => {
 
           <TextInput
             style={styles.input}
-            placeholder="Password"
+            placeholder="Contraseña"
             placeholderTextColor="#888"
             value={password}
             onChangeText={setPassword}
