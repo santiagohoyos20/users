@@ -7,10 +7,10 @@ export default function AppLayout() {
 
   if (loading) return null; // pantalla de carga opcional
 
-  if (!user) {
-    // Si no hay usuario → mandar al login
-    return <Redirect href="/(auth)/login" />;
-  }
+  // if (!user) {
+  //   // Si no hay usuario → mandar al login
+  //   return <Redirect href="/(auth)/login" />;
+  // }
 
   return (
     <SafeAreaProvider>

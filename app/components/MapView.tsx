@@ -25,7 +25,13 @@ export default function MapViewComponent() {
   //   { latitude: 10.908506, longitude: -74.793681 }, // Carrera 46
   // ];
 
-  
+  function chunkArray<T>(array: T[], size: number): T[][] {
+  const result: T[][] = [];
+  for (let i = 0; i < array.length; i += size) {
+    result.push(array.slice(i, i + size));
+  }
+  return result;
+  }
 
   useEffect(() => {
     const fetchBuses = async () => {
@@ -94,7 +100,7 @@ export default function MapViewComponent() {
   const GOOGLE_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || "AIzaSyCzM0x-5dDFApvSjNrjXM6JStcylPGFIqU";
 
   // Función para obtener la ruta de google maps
-  
+
 //   const fetchRoute = async () => {
 //   try {
 //     const chunks = chunkArray(waypoints, 25);
