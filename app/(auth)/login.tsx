@@ -9,6 +9,7 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   View,
+  Pressable
 } from "react-native";
 import { useUser } from "../../hooks/useUser";
 
@@ -25,50 +26,54 @@ const Login = () => {
     <TouchableWithoutFeedback
       onPress={Platform.OS !== "web" ? Keyboard.dismiss : undefined}
     >
-      <View style={styles.container}>
-        <View style={{ height: 30 }} />
+      <View style={styles.screen}>
 
+        {/* Logo */}
         <Image
           source={require("../../assets/images/icon-sin-bg.png")}
           style={styles.logo}
           resizeMode="contain"
         />
-        <View style={{ height: 30 }} />
 
-        <Text style={styles.title}>Iniciar Sesión</Text>
+        {/* Tarjeta */}
+        <View style={styles.card}>
+          <Text style={styles.title}>Iniciar Sesión</Text>
 
-        <View style={{ height: 30 }} />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor="#888"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
 
-        <TextInput
-          style={[styles.input, { marginBottom: 20 }]}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor="#888"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
 
-        <TextInput
-          style={[styles.input, { marginBottom: 20 }]}
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+          <Pressable
+            onPress={handleSubmit}
+            style={({ pressed }) => [
+              styles.button,
+              { backgroundColor: pressed ? "#D62828" : "#FFCC00" }
+            ]}
+          >
+            <Text style={styles.buttonText}>Iniciar Sesión</Text>
+          </Pressable>
 
-        <View style={{ height: 10 }} />
+          <View style={{ height: 20 }} />
 
-        <Text style={styles.button} onPress={handleSubmit}>
-          Login
-        </Text>
+          <Link href="/register" replace>
+            <Text style={styles.registerText}>¿No tienes una cuenta? Regístrate</Text>
+          </Link>
+        </View>
 
-        <View style={{ height: 100 }} />
-
-        <Link href="/register" replace>
-          <Text style={{ textAlign: "center", color: "#007AFF" }}>
-            Register instead
-          </Text>
-        </Link>
-        <View style={{ height: 75 }} />
       </View>
     </TouchableWithoutFeedback>
   );
@@ -77,35 +82,68 @@ const Login = () => {
 export default Login;
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
+    backgroundColor: "#ffece0ff",
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
   },
+
+  logo: {
+    width: 200,
+    height: 200,
+    marginBottom: 35,
+  },
+
+  card: {
+    width: "90%",
+    backgroundColor: "#fff",
+    padding: 25,
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+
   title: {
     textAlign: "center",
-    fontSize: 18,
-    marginBottom: 30,
+    fontSize: 22,
+    fontWeight: "600",
+    marginBottom: 25,
+    color: "#333",
   },
+
   input: {
-    width: "80%",
-    padding: 12,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 10,
-    fontSize: 16,
-  },
-  button: {
-    backgroundColor: "#333",
-    color: "#fff",
-    paddingHorizontal: 30,
+    width: "100%",
     paddingVertical: 12,
-    borderRadius: 10,
+    paddingHorizontal: 15,
+    borderWidth: 1.5,
+    borderColor: "#ddd",
+    borderRadius: 12,
     fontSize: 16,
+    marginBottom: 20,
+    backgroundColor: "#FAFAFA",
+    color: "#000000ff",
   },
-  logo: {
-    width: 150,
-    height: 150,
+
+  button: {
+    paddingVertical: 15,
+    borderRadius: 12,
+    marginTop: 10,
+    alignItems: "center",
+  },
+
+  buttonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+  },
+
+  registerText: {
+    textAlign: "center",
+    color: "#007AFF",
   },
 });

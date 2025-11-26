@@ -25,13 +25,7 @@ export default function MapViewComponent() {
   //   { latitude: 10.908506, longitude: -74.793681 }, // Carrera 46
   // ];
 
-  function chunkArray<T>(array: T[], size: number): T[][] {
-  const result: T[][] = [];
-  for (let i = 0; i < array.length; i += size) {
-    result.push(array.slice(i, i + size));
-  }
-  return result;
-  }
+  
 
   useEffect(() => {
     const fetchBuses = async () => {
@@ -99,67 +93,68 @@ export default function MapViewComponent() {
 
   const GOOGLE_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || "AIzaSyCzM0x-5dDFApvSjNrjXM6JStcylPGFIqU";
 
-  // Función para obtener la ruta
-  const fetchRoute = async () => {
-  try {
-    const chunks = chunkArray(waypoints, 25); // ← Divide en grupos de 25
+  // Función para obtener la ruta de google maps
+  
+//   const fetchRoute = async () => {
+//   try {
+//     const chunks = chunkArray(waypoints, 25);
+//     let fullRoute: Coordinate[] = [];
 
-    let fullRoute: Coordinate[] = [];
+//     for (let i = 0; i < chunks.length; i++) {
+//       const chunk = chunks[i];
 
-    for (let i = 0; i < chunks.length; i++) {
-      const chunk = chunks[i];
+//       if (chunk.length < 2) continue;
 
-      if (chunk.length < 2) continue;
+//       const origin = chunk[0];
+//       const destination = chunk[chunk.length - 1];
 
-      const origin = chunk[0];
-      const destination = chunk[chunk.length - 1];
+//       const waypointsStr = chunk
+//         .slice(1, -1)
+//         .map((wp) => `${wp.latitude},${wp.longitude}`)
+//         .join("|");
 
-      const waypointsStr = chunk
-        .slice(1, -1)
-        .map((wp) => `${wp.latitude},${wp.longitude}`)
-        .join("|");
+//       const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${
+//         origin.latitude
+//       },${origin.longitude}&destination=${destination.latitude},${
+//         destination.longitude
+//       }&waypoints=${waypointsStr}&key=${GOOGLE_API_KEY}`;
 
-      const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${
-        origin.latitude
-      },${origin.longitude}&destination=${destination.latitude},${
-        destination.longitude
-      }&waypoints=${waypointsStr}&key=${GOOGLE_API_KEY}`;
+//       console.log(`Request ${i + 1}/${chunks.length}`);
 
-      console.log(`Request ${i + 1}/${chunks.length}`);
+//       const res = await fetch(url);
+//       const json = await res.json();
 
-      const res = await fetch(url);
-      const json = await res.json();
+//       if (!json.routes || json.routes.length === 0) {
+//         console.warn("No route in chunk", i);
+//         continue;
+//       }
 
-      if (!json.routes || json.routes.length === 0) {
-        console.warn("No route in chunk", i);
-        continue;
-      }
+//       const points = polyline.decode(json.routes[0].overview_polyline.points);
 
-      const points = polyline.decode(json.routes[0].overview_polyline.points);
+//       const chunkCoords = points.map(([lat, lng]) => ({
+//         latitude: lat,
+//         longitude: lng,
+//       }));
 
-      const chunkCoords = points.map(([lat, lng]) => ({
-        latitude: lat,
-        longitude: lng,
-      }));
+//       // Agregarlos a la ruta final
+//       fullRoute = [...fullRoute, ...chunkCoords];
+//     }
 
-      // Agregarlos a la ruta final
-      fullRoute = [...fullRoute, ...chunkCoords];
-    }
+//     setRouteCoords(fullRoute);
+//     console.log("Ruta total generada:", fullRoute.length, "puntos");
 
-    setRouteCoords(fullRoute);
-    console.log("Ruta total generada:", fullRoute.length, "puntos");
-
-  } catch (error) {
-    console.error("Error al obtener la ruta:", error);
-  }
-};
+//   } catch (error) {
+//     console.error("Error al obtener la ruta:", error);
+//   }
+// };
 
 
   useEffect(() => {
     if (GOOGLE_API_KEY) {
       //fetchRoute();
+      console.log("GOOGLE_API_KEY está configurada. y la vida es bella y amo a las tortugas y a Natalia");
     } else {
-      console.warn("No se configuró GOOGLE_API_KEY");
+      console.warn("No se configuró GOOGLE_API_KEY e igual amo a las tortugas y a Natalia");
     }
   }, []);
 
