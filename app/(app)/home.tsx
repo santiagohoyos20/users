@@ -30,13 +30,16 @@ export default function Home() {
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFECE0" }}>
 
 
+      
+
       <Pressable
         onPress={() => router.push("/info")}
-        style={styles.infoButton}
-      >
-        <Text style={styles.infoText}>i</Text>
+        style={({ pressed }) => [
+          styles.infoButton,
+          { backgroundColor: pressed ? "#D62828" : "#FFCC00" },
+        ]}>
+        <Text style={styles.infoText}>info</Text>
       </Pressable>
-
 
       <ScrollView contentContainerStyle={styles.container}>
 
@@ -165,4 +168,24 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#333",
   },
+
+  infoButton: {
+  marginTop: 50,
+  position: "absolute",
+  top: 20,     // distancia desde arriba
+  left: 20,    // distancia desde la izquierda
+  width: 40,   // cuadrado
+  height: 40,
+  borderRadius: 8, // esquinas ligeramente redondeadas
+  backgroundColor: "#FFCC00",
+  justifyContent: "center",
+  alignItems: "center",
+  zIndex: 20,
+  elevation: 5,
+},
+infoText: {
+  fontSize: 20,
+  fontWeight: "bold",
+  color: "#333",
+},
 });
